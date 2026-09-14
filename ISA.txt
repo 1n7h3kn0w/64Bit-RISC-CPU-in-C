@@ -14,5 +14,8 @@ HLT (Exits and returns reg val as exit code to OS)
 INT (calls an interupt using the reg as the code and the stack (top-down) for params)
 
 INTERUPTS:
-    0 - Print (takes the top value off of the stack and prints it as a char)
-    1 - Clear (Clears the stack)
+    0 - Print (Takes the top value off of the stack and prints it as a char)
+    1 - PrInt (Takes the top value off of the stack and prints it as an uint64_t)
+    2 - Clear (Clears the stack)
+    3 - Seed (Takes the top value off of the stack to use as the seed for random values)
+    4 - Random (Takes two values from the stack, MIN and then MAX, then generates a random number from [MIN:MAX] (both inclusive)

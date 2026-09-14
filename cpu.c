@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define STACK_SIZE 65536
 #define RAM_SIZE 65536
@@ -128,6 +129,16 @@ int interupt(struct CPU *cpu) {
         case 2:
             cpu->stack.SP = 0;
             break;
+        case 3:
+            cpu->stack.SP--;
+            srand(cpu->stack.data[cpu->stack.SP]);
+            break;
+        case 4:
+            cpu->stack.SP--;
+            uint64_t MIN = cpu->stack.data[cpu->stack.SP--];
+            uint64_t MAX = cpu->stack.data[cpu->stack.SP--];
+            cpu->reg = (rand() % (MAX - MIN + 1)) + MIN;
+            break;
         default:
             break;
     }
@@ -172,6 +183,7 @@ void ReadFile(struct CPU *cpu) {
 }
 
 int main() {
+    srand(time(NULL));
 
     uint8_t* code;
 
