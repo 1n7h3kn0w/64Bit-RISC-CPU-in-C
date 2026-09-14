@@ -24,7 +24,7 @@ opcodes = {
     "SRP":16, 16:"SRP",
 }
 
-file = input("input the file to compile without file extention (only .ria files):\n")
+file = input("input the file to compile without file extention:\n")
 
 ReadLines = []
 JumpDict = {}
