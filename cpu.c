@@ -18,6 +18,7 @@ struct CPU {
     uint8_t* code;
     uint64_t ip;
     uint64_t reg;
+    uint64_t RamPointer;
     uint64_t *ram;
     uint32_t CodeSize;
 };
@@ -43,24 +44,34 @@ int PSH(struct CPU *cpu) {
     }
 }
 int ADD(struct CPU *cpu) {
-    cpu->stack.data[cpu->stack.SP-1] = cpu->stack.data[cpu->stack.SP-1] + cpu->reg;
+    if(cpu->stack.SP == 0) {
+        cpu->stack.data[cpu->stack.SP] = cpu->reg;
+        cpu->stack.SP++;
+    } else {
+        cpu->stack.data[cpu->stack.SP-1] = cpu->stack.data[cpu->stack.SP-1] + cpu->reg;
+    }
     return 0;
 }
 int SUB(struct CPU *cpu) {
-    cpu->stack.data[cpu->stack.SP-1] = cpu->stack.data[cpu->stack.SP-1] - cpu->reg;
-    return 0;
+    if(cpu->stack.SP == 0) {
+        cpu->stack.data[cpu->stack.SP] = 0xffffffffffffffff - cpu->reg;
+        cpu->stack.SP++;
+    } else {
+        cpu->stack.data[cpu->stack.SP-1] = cpu->stack.data[cpu->stack.SP-1] - cpu->reg;
+    }
+        return 0;
 }
 int LDI(struct CPU *cpu) {
     uint64_t total = 0;
 
     cpu->ip++;
-    total = total + (cpu->code[cpu->ip] << 24);
+    total = total + ((uint64_t)(cpu->code[cpu->ip]) << 24);
     cpu->ip++;
-    total = total + (cpu->code[cpu->ip] << 16);
+    total = total + ((uint64_t)(cpu->code[cpu->ip]) << 16);
     cpu->ip++;
-    total = total + (cpu->code[cpu->ip] << 8);
+    total = total + ((uint64_t)(cpu->code[cpu->ip]) << 8);
     cpu->ip++;
-    total = total + (cpu->code[cpu->ip]);
+    total = total + ((uint64_t)(cpu->code[cpu->ip]));
 
     cpu->reg = total;
     return 0;
@@ -69,75 +80,159 @@ int JMP(struct CPU *cpu) {
     uint64_t total = 0;
 
     cpu->ip++;
-    total = total + (cpu->code[cpu->ip] << 24);
+    total = total + (((uint64_t)cpu->code[cpu->ip]) << 24);
     cpu->ip++;
-    total = total + (cpu->code[cpu->ip] << 16);
+    total = total + (((uint64_t)cpu->code[cpu->ip]) << 16);
     cpu->ip++;
-    total = total + (cpu->code[cpu->ip] << 8);
+    total = total + (((uint64_t)cpu->code[cpu->ip]) << 8);
     cpu->ip++;
-    total = total + (cpu->code[cpu->ip]);
+    total = total + (((uint64_t)cpu->code[cpu->ip]));
 
+    if(total > cpu->CodeSize) {
+        printf("JUMP tried to go out of bounds, exiting now.\n");
+        exit(7);
+    }
     cpu->ip = total;
     return 0;
 }
 int JEQ(struct CPU *cpu) {
+    if(cpu->stack.SP == 0) {
+        printf("Jump failed due to stack underflow, exiting now.\n");
+        exit(10);
+    }
     if(cpu->reg == cpu->stack.data[cpu->stack.SP - 1]) {
         uint64_t total = 0;
 
         cpu->ip++;
-        total = total + (cpu->code[cpu->ip] << 24);
+        total = total + (((uint64_t)cpu->code[cpu->ip]) << 24);
         cpu->ip++;
-        total = total + (cpu->code[cpu->ip] << 16);
+        total = total + (((uint64_t)cpu->code[cpu->ip]) << 16);
         cpu->ip++;
-        total = total + (cpu->code[cpu->ip] << 8);
+        total = total + (((uint64_t)cpu->code[cpu->ip]) << 8);
         cpu->ip++;
-        total = total + (cpu->code[cpu->ip]);
+        total = total + (((uint64_t)cpu->code[cpu->ip]));
+
+        if(total > cpu->CodeSize) {
+            printf("JUMP tried to go out of bounds, exiting now.\n");
+            exit(7);
+        }
 
         cpu->ip = total;
-        return 0;
     } else {
-        return 0;
+        cpu->ip++;
     }
+    return 0;
 }
 int SLT(struct CPU *cpu) {
     if(cpu->stack.SP == 0) {cpu->reg = 0;}
-    if(cpu->stack.data[cpu->stack.SP-1] == cpu->reg) {cpu->reg = 1;}
+    else if(cpu->stack.data[cpu->stack.SP-1] == cpu->reg) {cpu->reg = 1;}
     else {cpu->reg = 0;}
     return 0;
 }
 int STR(struct CPU *cpu) {
-    cpu->ram[cpu->stack.data[cpu->stack.SP-1]] = cpu->reg;
+    if(cpu->stack.SP == 0) {
+        cpu->ram[0] = cpu->reg;
+    } else {
+        cpu->ram[cpu->stack.data[cpu->stack.SP-1]] = cpu->reg;
+    }
     return 0;
 }
 int LDR(struct CPU *cpu) {
-    cpu->reg = cpu->ram[cpu->stack.data[cpu->stack.SP-1]];
+    if(cpu->stack.SP == 0) {
+        cpu->reg = cpu->ram[0];
+    } else {
+        cpu->reg = cpu->ram[cpu->stack.data[cpu->stack.SP-1]];
+    }
     return 0;
 }
 void HLT(struct CPU *cpu) {
     exit(cpu->reg);
 }
+
+int LDP(struct CPU *cpu) {
+    if(cpu->RamPointer > RAM_SIZE) {
+        cpu->reg = cpu->ram[RAM_SIZE - 1];
+    } else {
+        cpu->reg = cpu->ram[cpu->RamPointer];
+    }
+    return 0;
+}
+int STP(struct CPU *cpu) {
+    if(cpu->RamPointer > RAM_SIZE) {
+        cpu->ram[RAM_SIZE - 1] = cpu->reg;
+    } else {
+        cpu->ram[cpu->RamPointer] = cpu->reg;
+    }
+    return 0;
+}
+int ICP(struct CPU *cpu) {
+    if(cpu->RamPointer == RAM_SIZE - 1) {
+        cpu->RamPointer = 0;
+    } else {
+        cpu->RamPointer++;
+    }
+    return 0;
+}
+int DCP(struct CPU *cpu) {
+    if(cpu->RamPointer == 0) {
+        cpu->RamPointer = RAM_SIZE - 1;
+    } else {
+        cpu->RamPointer--;
+    }
+    return 0;
+}
+int SRP(struct CPU *cpu) {
+    if(cpu->reg >= RAM_SIZE) {
+        cpu->RamPointer = RAM_SIZE - 1;
+    } else {
+        cpu->RamPointer = cpu->reg;
+    }
+    return 0;
+}
+
 int interupt(struct CPU *cpu) {
     switch (cpu->reg) {
         case 0:
-            cpu->stack.SP--;
-            printf("%c", cpu->stack.data[cpu->stack.SP]);
+            if(cpu->stack.SP == 0) {
+                printf("%c", 0);
+            } else {
+                cpu->stack.SP--;
+                printf("%c", cpu->stack.data[cpu->stack.SP]);
+            }
             break;
         case 1:
-            cpu->stack.SP--;
-            printf("%llu", cpu->stack.data[cpu->stack.SP]);
+            if(cpu->stack.SP == 0) {
+                printf("%c", 0);
+            } else {
+                cpu->stack.SP--;
+                printf("%llu", cpu->stack.data[cpu->stack.SP]);
+            }
             break;
         case 2:
             cpu->stack.SP = 0;
             break;
         case 3:
-            cpu->stack.SP--;
-            srand(cpu->stack.data[cpu->stack.SP]);
+            if(cpu->stack.SP == 0) {
+                srand(0);
+            } else {
+                cpu->stack.SP--;
+                srand(cpu->stack.data[cpu->stack.SP]);
+            }
             break;
         case 4:
-            cpu->stack.SP--;
-            uint64_t MIN = cpu->stack.data[cpu->stack.SP--];
-            uint64_t MAX = cpu->stack.data[cpu->stack.SP--];
-            cpu->reg = (rand() % (MAX - MIN + 1)) + MIN;
+            if(cpu->stack.SP == 0 || cpu->stack.SP == 1) {
+                printf("Stack underflow, exiting now.\n");
+                exit(9);
+            } else {
+                cpu->stack.SP--;
+                uint64_t MIN = cpu->stack.data[cpu->stack.SP--];
+                uint64_t MAX = cpu->stack.data[cpu->stack.SP--];
+                if(MAX > MIN) {
+                    cpu->reg = (rand() % (MAX - MIN + 1)) + MIN;
+                } else {
+                    cpu->reg = (rand() % (MIN - MAX + 1)) + MAX;
+                }
+            }
             break;
         default:
             break;
@@ -195,6 +290,7 @@ int main() {
         .running = 1,
         .ip = 0,
         .reg = 0,
+        .RamPointer = 0,
         .ram = calloc(RAM_SIZE, 8)
     };
     ReadFile(&cpu);
@@ -254,6 +350,21 @@ int main() {
                 break;
             case 11:
                 HLT(&cpu);
+                break;
+            case 12:
+                LDP(&cpu);
+                break;
+            case 13:
+                STP(&cpu);
+                break;
+            case 14:
+                ICP(&cpu);
+                break;
+            case 15:
+                DCP(&cpu);
+                break;
+            case 16:
+                SRP(&cpu);
                 break;
             default:
                 break;

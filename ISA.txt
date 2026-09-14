@@ -11,6 +11,11 @@ SLT (Sets reg to 1 if the reg is less than the top of the stack, otherwise it se
 STR (Stores the reg in RAM at the index pointed to by the top of the stack (non-destructive))
 LDR (Loads the value of RAM from the top of the stack (non-distructive) to the reg)
 HLT (Exits and returns reg val as exit code to OS)
+LDP (Uses RAM-POINTER and loads the value of RAM at that address into the reg)
+STP (Uses RAM-POINTER and stores the reg value in that RAM address)
+ICP (Increment the RAM-POINTER)
+DCP (Decrement the RAM-POINTER)
+SRP (Set the RAM-POINTER to the value in reg)
 INT (calls an interupt using the reg as the code and the stack (top-down) for params)
 
 INTERUPTS:

@@ -16,6 +16,12 @@ opcodes = {
     "SLT":8, 8:"SLT",
     "STR":9, 9:"STR",
     "LDR":10, 10:"LDR",
+    "HLT":11, 11:"HLT",
+    "LDP":12, 12:"LDP",
+    "STP":13, 13:"STP",
+    "ICP":14, 14:"ICP",
+    "DCP":15, 15:"DCP",
+    "SRP":16, 16:"SRP",
 }
 
 file = input("input the file to compile without file extention (only .ria files):\n")
