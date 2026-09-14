@@ -1,0 +1,18 @@
+This is a RISC CPU that uses 1 reg and a stack
+
+POP (Pops top value from stack to register (zero if stack is empty))
+PSH (Pushes the value from the register to the top of the stack)
+ADD (Adds the reg value to the top of the stack)
+SUB (Subtracts the reg value from the top of the stack)
+LDI IMM (Sets the reg to the IMM value)
+JMP LABEL (Unconditionally jumps to a label)
+JEQ LABEL (Jumps to a label if the top of the stack equals the register (non-destructive))
+SLT (Sets reg to 1 if the reg is less than the top of the stack, otherwise it sets it to 0)
+STR (Stores the reg in RAM at the index pointed to by the top of the stack (non-destructive))
+LDR (Loads the value of RAM from the top of the stack (non-distructive) to the reg)
+HLT (Exits and returns reg val as exit code to OS)
+INT (calls an interupt using the reg as the code and the stack (top-down) for params)
+
+INTERUPTS:
+    0 - Print (takes the top value off of the stack and prints it as a char)
+    1 - Clear (Clears the stack)
