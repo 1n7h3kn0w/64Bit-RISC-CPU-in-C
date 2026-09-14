@@ -122,6 +122,10 @@ int interupt(struct CPU *cpu) {
             printf("%c", cpu->stack.data[cpu->stack.SP]);
             break;
         case 1:
+            cpu->stack.SP--;
+            printf("%llu", cpu->stack.data[cpu->stack.SP]);
+            break;
+        case 2:
             cpu->stack.SP = 0;
             break;
         default:
