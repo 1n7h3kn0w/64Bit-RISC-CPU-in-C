@@ -22,6 +22,8 @@ opcodes = {
     "ICP":14, 14:"ICP",
     "DCP":15, 15:"DCP",
     "SRP":16, 16:"SRP",
+    "CALL":17, 17:"CALL",
+    "RET":18, 18:"RET"
 }
 
 file = input("input the file to compile without file extention:\n")
@@ -45,7 +47,7 @@ with open(file, 'r') as file:
 LabelCounter = 0
 ByteOffset = 0
 for line, value in enumerate(ReadLines):
-    if(value[0] == "LDI" or value[0] == "JMP" or value[0] == "JEQ"):
+    if(value[0] == "LDI" or value[0] == "JMP" or value[0] == "JEQ" or value[0] == "CALL"):
         ByteOffset += 4
     if(value[0] == "DEF"):
         JumpDict[value[1]] = (line + ByteOffset - LabelCounter)

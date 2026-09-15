@@ -5,11 +5,14 @@
 #include <time.h>
 
 #define STACK_SIZE 65536
+#define CALL_STACK_SIZE 65536
 #define RAM_SIZE 65536
 
 struct STACK {
     uint32_t SP; // Set this to zero on declaration
     uint64_t *data; // Declare this to all zeros on declaration
+    uint64_t *CallStack;
+    uint32_t CSP;
 };
 
 struct CPU {
@@ -148,7 +151,6 @@ int LDR(struct CPU *cpu) {
 void HLT(struct CPU *cpu) {
     exit(cpu->reg);
 }
-
 int LDP(struct CPU *cpu) {
     if(cpu->RamPointer > RAM_SIZE) {
         cpu->reg = cpu->ram[RAM_SIZE - 1];
@@ -187,6 +189,20 @@ int SRP(struct CPU *cpu) {
     } else {
         cpu->RamPointer = cpu->reg;
     }
+    return 0;
+}
+
+int CALL(struct CPU *cpu) {
+    cpu->stack.CallStack[cpu->stack.CSP++] = cpu->ip;
+    JMP(cpu);
+    return 0;
+}
+int RET(struct CPU *cpu) {
+    if(cpu->stack.CSP == 0) {
+        HLT(cpu);
+    }
+    cpu->stack.CSP--;
+    cpu->ip = cpu->stack.CallStack[cpu->stack.CSP];
     return 0;
 }
 
@@ -285,7 +301,9 @@ int main() {
     struct CPU cpu = {
         .stack = {
             .SP = 0,
-            .data = calloc(STACK_SIZE, 8)
+            .data = calloc(STACK_SIZE, 8),
+            .CallStack = calloc(CALL_STACK_SIZE, 8),
+            .CSP = 0
         },
         .running = 1,
         .ip = 0,
@@ -365,6 +383,12 @@ int main() {
                 break;
             case 16:
                 SRP(&cpu);
+                break;
+            case 17:
+                CALL(&cpu);
+                break;
+            case 18:
+                RET(&cpu);
                 break;
             default:
                 break;
