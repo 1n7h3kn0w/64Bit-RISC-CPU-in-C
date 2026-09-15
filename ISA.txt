@@ -16,11 +16,8 @@ STP (Uses RAM-POINTER and stores the reg value in that RAM address)
 ICP (Increment the RAM-POINTER)
 DCP (Decrement the RAM-POINTER)
 SRP (Set the RAM-POINTER to the value in reg)
-
-TO_ADD:
 CALL LABEL (Jump to a function and push the current instruction pointer to a call stack)
 RET (Pop the top value from the call stack and jump to it)
-
 INT (calls an interupt using the reg as the code and the stack (top-down) for params)
 
 INTERUPTS:
