@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 
+// These are just simple values that can be moved around for removing software defined memory limits for turing completeness
 #define STACK_SIZE 65536
 #define CALL_STACK_SIZE 65536
 #define RAM_SIZE 65536
