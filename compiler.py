@@ -63,11 +63,23 @@ while(LineCounter < len(ReadLines)):
 
 CompiledList = []
 
-for line in ReadLines:
+for LineCount, line in enumerate(ReadLines):
     if(len(line) == 1):
-        CompiledList.append(opcodes.get(line[0], None))
+        instruction = opcodes.get(line[0], None)
+        
+        if(instruction == None):
+            print(f"There was an error in compiling\n{LineCount}: {line}")
+            exit(1)
+        
+        CompiledList.append(instruction)
     else:
-        CompiledList.append(opcodes.get(line[0], None))
+        instruction = opcodes.get(line[0], None)
+        
+        if(instruction == None):
+            print(f"There was an error in compiling\n{LineCount}: {line}")
+            exit(1)
+        
+        CompiledList.append(instruction)
         if(line[0] == "LDI"):
             CompiledList.extend(From64To8(int(line[1])))
         else:

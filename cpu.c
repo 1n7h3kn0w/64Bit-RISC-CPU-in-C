@@ -129,7 +129,7 @@ int JEQ(struct CPU *cpu) {
 }
 int SLT(struct CPU *cpu) {
     if(cpu->stack.SP == 0) {cpu->reg = 0;}
-    else if(cpu->stack.data[cpu->stack.SP-1] == cpu->reg) {cpu->reg = 1;}
+    else if(cpu->stack.data[cpu->stack.SP-1] < cpu->reg) {cpu->reg = 1;}
     else {cpu->reg = 0;}
     return 0;
 }
