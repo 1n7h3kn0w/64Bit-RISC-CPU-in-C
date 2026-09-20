@@ -1,28 +1,42 @@
 This is a RISC CPU that uses 1 reg and a stack
 
+STACK:
 POP (Pops top value from stack to register (zero if stack is empty))
 PSH (Pushes the value from the register to the top of the stack)
-ADD (Adds the reg value to the top of the stack)
-SUB (Subtracts the reg value from the top of the stack)
+ICS (Increment the top value of the stack)
+DCS (Decrement the top value of the stack)
+
+MATH:
+ADD (Adds the reg value to the top of the stack (Stores back in stack, destructive to the stack value) )
+SUB (Subtracts the reg value from the top of the stack (Stores back in stack, destructive to the stack value) )
+INC (Increment the register)
+DEC (Decrement the register)
+
+REGISTER:
 LDI IMM (Sets the reg to the IMM value)
+
+CONTROL FLOW:
 JMP LABEL (Unconditionally jumps to a label)
 JEQ LABEL (Jumps to a label if the top of the stack equals the register (non-destructive))
 SLT (Sets reg to 1 if the reg is less than the top of the stack, otherwise it sets it to 0)
+HLT (Exits and returns reg val as exit code to OS)
+CALL LABEL (Jump to a function and push the current instruction pointer to a call stack)
+RET (Pop the top value from the call stack and jump to it)
+
+RAM:
 STR (Stores the reg in RAM at the index pointed to by the top of the stack (non-destructive))
 LDR (Loads the value of RAM from the top of the stack (non-distructive) to the reg)
-HLT (Exits and returns reg val as exit code to OS)
 LDP (Uses RAM-POINTER and loads the value of RAM at that address into the reg)
 STP (Uses RAM-POINTER and stores the reg value in that RAM address)
 ICP (Increment the RAM-POINTER)
 DCP (Decrement the RAM-POINTER)
 SRP (Set the RAM-POINTER to the value in reg)
-CALL LABEL (Jump to a function and push the current instruction pointer to a call stack)
-RET (Pop the top value from the call stack and jump to it)
+
 INT (calls an interupt using the reg as the code and the stack (top-down) for params)
 
 INTERUPTS:
     0 - Print (Takes the top value off of the stack and prints it as a char)
-    1 - PrInt (Takes the top value off of the stack and prints it as an uint64_t)
+    1 - PrINT (Takes the top value off of the stack and prints it as an uint64_t)
     2 - Clear (Clears the stack)
     3 - Seed (Takes the top value off of the stack to use as the seed for random values)
     4 - Random (Takes two values from the stack, MIN and then MAX, then generates a random number from [MIN:MAX] (both inclusive)

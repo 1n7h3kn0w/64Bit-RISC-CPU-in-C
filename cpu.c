@@ -65,6 +65,27 @@ int SUB(struct CPU *cpu) {
     }
         return 0;
 }
+
+int INC(struct CPU *cpu) {
+    cpu->reg++;
+    return 0;
+}
+int DEC(struct CPU *cpu) {
+    cpu->reg--;
+    return 0;
+}
+
+int ICS(struct CPU *cpu) {
+    if(cpu->stack.SP == 0) {return 1;}
+    cpu->stack.data[cpu->stack.SP-1]++;
+    return 0;
+}
+int DCS(struct CPU *cpu) {
+    if(cpu->stack.SP == 0) {return 1;}
+    cpu->stack.data[cpu->stack.SP-1]--;
+    return 0;
+}
+
 int LDI(struct CPU *cpu) {
     uint64_t total = 0;
 
@@ -390,6 +411,18 @@ int main() {
                 break;
             case 18:
                 RET(&cpu);
+                break;
+            case 19:
+                INC(&cpu);
+                break;
+            case 20:
+                DEC(&cpu);
+                break;
+            case 21:
+                INC(&cpu);
+                break;
+            case 22:
+                DEC(&cpu);
                 break;
             default:
                 break;

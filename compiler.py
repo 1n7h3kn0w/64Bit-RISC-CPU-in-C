@@ -23,7 +23,11 @@ opcodes = {
     "DCP":15, 15:"DCP",
     "SRP":16, 16:"SRP",
     "CALL":17, 17:"CALL",
-    "RET":18, 18:"RET"
+    "RET":18, 18:"RET",
+    "ICS":19, 19:"ICS",
+    "DCS":20, 20:"DCS",
+    "INC":21, 21:"INC",
+    "DEC":22, 22:"DEC",
 }
 
 file = input("input the file to compile without file extention:\n")
