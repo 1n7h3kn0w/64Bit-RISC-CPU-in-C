@@ -5,6 +5,12 @@ POP (Pops top value from stack to register (zero if stack is empty))
 PSH (Pushes the value from the register to the top of the stack)
 ICS (Increment the top value of the stack)
 DCS (Decrement the top value of the stack)
+DUP (Dulicate - Duplicate the top of the stack)
+DRP (DROP - Remove the top of the stack but dont put it in the reg)
+ROT (Rotate - rotate the top 3 values of the stack [A B C] -> [B C A])
+NIP (Nip - Remove the second value of the stack [A B C] -> [A C])
+IMT (IsEmpty - sets REG to 0 if the SP is 0 otherwise 1)
+SIZ (Size - sets the reg to the value of SP)
 
 MATH:
 ADD (Adds the reg value to the top of the stack (Stores back in stack, destructive to the stack value) )

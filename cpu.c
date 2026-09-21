@@ -47,6 +47,51 @@ int PSH(struct CPU *cpu) {
         return 0;
     }
 }
+
+// ALL of these need debuged
+
+int DUP(struct CPU *cpu) {
+    if(cpu->stack.SP == 0) {return 1;}
+    cpu->stack.data[cpu->stack.SP] = cpu->stack.data[cpu->stack.SP - 1];
+    cpu->stack.SP++;
+    return 0;
+}
+int DRP(struct CPU *cpu) {
+    if(cpu->stack.SP == 0) {return 1;}
+    cpu->stack.SP--;
+}
+int ROT(struct CPU *cpu) {
+    if(cpu->stack.SP < 3) {return 1;}
+    cpu->stack.SP--;
+    int A = cpu->stack.data[cpu->stack.SP--];    
+    int B = cpu->stack.data[cpu->stack.SP--];
+    int C = cpu->stack.data[cpu->stack.SP--];
+
+    cpu->stack.data[cpu->stack.SP++] = A;
+    cpu->stack.data[cpu->stack.SP++] = C;
+    cpu->stack.data[cpu->stack.SP++] = B;
+
+    return 0;
+}
+int NIP(struct CPU *cpu) {
+    if(cpu->stack.SP < 2) {return 1;}
+    cpu->stack.SP--;
+    int A = cpu->stack.data[cpu->stack.SP--];
+    cpu->stack.data[cpu->stack.SP++] = A;
+    return 0;
+}
+int IMT(struct CPU *cpu) {
+    if(cpu->stack.SP == 0) {
+        cpu->reg = 0;
+        return 0;
+    }
+    cpu->reg = 1;
+    return 0;
+}
+int SIZ(struct CPU *cpu) {
+    cpu->reg = cpu->stack.SP;
+}
+
 int ADD(struct CPU *cpu) {
     if(cpu->stack.SP == 0) {
         cpu->stack.data[cpu->stack.SP] = cpu->reg;
@@ -423,6 +468,24 @@ int main() {
                 break;
             case 22:
                 DEC(&cpu);
+                break;
+            case 23:
+                DUP(&cpu);
+                break;
+            case 24:
+                DRP(&cpu);
+                break;
+            case 25:
+                ROT(&cpu);
+                break;
+            case 26:
+                NIP(&cpu);
+                break;
+            case 27:
+                IMT(&cpu);
+                break;
+            case 28:
+                SIZ(&cpu);
                 break;
             default:
                 break;
