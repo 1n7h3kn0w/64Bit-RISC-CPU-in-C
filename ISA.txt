@@ -15,8 +15,21 @@ SIZ (Size - sets the reg to the value of SP)
 MATH:
 ADD (Adds the reg value to the top of the stack (Stores back in stack, destructive to the stack value) )
 SUB (Subtracts the reg value from the top of the stack (Stores back in stack, destructive to the stack value) )
+
+MLT (sets the reg to reg * TopOfStack (destructive))
+DIV (sets the reg to reg / TopOfStack (destructive) (intager division))
+MOD (sets the reg to reg % TopOfStack (destructive))
+
 INC (Increment the register)
 DEC (Decrement the register)
+
+LSH (sets the reg to reg << TopOfStack (destructive) )
+RSH (sets the reg to reg >> TopOfStack (destructive) )
+
+AND (Just the binary opperation as named on the reg and the top of the stack)
+OR (Just the binary opperation as named on the reg and the top of the stack)
+XOR (Just the binary opperation as named on the reg and the top of the stack)
+NOT (Just the binary opperation as named on the reg)
 
 REGISTER:
 LDI IMM (Sets the reg to the IMM value)

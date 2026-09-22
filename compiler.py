@@ -34,6 +34,11 @@ opcodes = {
     "NIP":26, 26:"NIP",
     "IMT":27, 27:"IMT",
     "SIZ":28, 28:"SIZ",
+    "MUL":29, 29:"MUL",
+    "DIV":30, 30:"DIV",
+    "MOD":31, 31:"MOD",
+    "LSH":32, 32:"LSH",
+    "RSH":33, 33:"RSH",
 }
 
 file = input("input the file to compile without file extention:\n")

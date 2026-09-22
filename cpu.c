@@ -47,9 +47,6 @@ int PSH(struct CPU *cpu) {
         return 0;
     }
 }
-
-// ALL of these need debuged
-
 int DUP(struct CPU *cpu) {
     if(cpu->stack.SP == 0) {return 1;}
     cpu->stack.data[cpu->stack.SP] = cpu->stack.data[cpu->stack.SP - 1];
@@ -91,7 +88,6 @@ int IMT(struct CPU *cpu) {
 int SIZ(struct CPU *cpu) {
     cpu->reg = cpu->stack.SP;
 }
-
 int ADD(struct CPU *cpu) {
     if(cpu->stack.SP == 0) {
         cpu->stack.data[cpu->stack.SP] = cpu->reg;
@@ -110,7 +106,46 @@ int SUB(struct CPU *cpu) {
     }
         return 0;
 }
-
+int MLT(struct CPU *cpu) {
+    cpu->stack.SP--;
+    cpu->reg = cpu->reg * cpu->stack.data[cpu->stack.SP];
+    return 0;
+}
+int DIV(struct CPU *cpu) {
+    cpu->stack.SP--;
+    cpu->reg = cpu->reg / cpu->stack.data[cpu->stack.SP];
+    return 0;
+}
+int MOD(struct CPU *cpu) {
+    cpu->stack.SP--;
+    cpu->reg = cpu->reg % cpu->stack.data[cpu->stack.SP];
+    return 0;
+}
+int LSH(struct CPU *cpu) {
+    cpu->stack.SP--;
+    cpu->reg = cpu->reg << cpu->stack.data[cpu->stack.SP];
+    return 0;
+}
+int RSH(struct CPU *cpu) {
+    cpu->stack.SP--;
+    cpu->reg = cpu->reg >> cpu->stack.data[cpu->stack.SP];
+    return 0;
+}
+int AND(struct CPU *cpu) {
+    cpu->stack.SP--;
+    cpu->reg = cpu->reg & cpu->stack.data[cpu->stack.SP];
+}
+int OR(struct CPU *cpu) {
+    cpu->stack.SP--;
+    cpu->reg = cpu->reg | cpu->stack.data[cpu->stack.SP];
+}
+int XOR(struct CPU *cpu) {
+    cpu->stack.SP--;
+    cpu->reg = cpu->reg ^ cpu->stack.data[cpu->stack.SP];
+}
+int NOT(struct CPU *cpu) {
+    cpu->reg = ~(cpu->reg);
+}
 int INC(struct CPU *cpu) {
     cpu->reg++;
     return 0;
@@ -119,7 +154,6 @@ int DEC(struct CPU *cpu) {
     cpu->reg--;
     return 0;
 }
-
 int ICS(struct CPU *cpu) {
     if(cpu->stack.SP == 0) {return 1;}
     cpu->stack.data[cpu->stack.SP-1]++;
@@ -130,7 +164,6 @@ int DCS(struct CPU *cpu) {
     cpu->stack.data[cpu->stack.SP-1]--;
     return 0;
 }
-
 int LDI(struct CPU *cpu) {
     uint64_t total = 0;
 
@@ -258,7 +291,6 @@ int SRP(struct CPU *cpu) {
     }
     return 0;
 }
-
 int CALL(struct CPU *cpu) {
     cpu->stack.CallStack[cpu->stack.CSP++] = cpu->ip;
     JMP(cpu);
@@ -323,6 +355,7 @@ int interupt(struct CPU *cpu) {
     return 0;
 }
 
+
 void ReadFile(struct CPU *cpu) {
     char FilePath[512];
     printf("What is the file that should be run:\n");
@@ -359,6 +392,7 @@ void ReadFile(struct CPU *cpu) {
 
     return;
 }
+
 
 int main() {
     srand(time(NULL));
@@ -486,6 +520,21 @@ int main() {
                 break;
             case 28:
                 SIZ(&cpu);
+                break;
+            case 29:
+                MUL(&cpu);
+                break;
+            case 30:
+                DIV(&cpu);
+                break;
+            case 31:
+                MOD(&cpu);
+                break;
+            case 32:
+                LSH(&cpu);
+                break;
+            case 33:
+                RSH(&cpu);
                 break;
             default:
                 break;
